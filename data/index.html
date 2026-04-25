@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>C1001 Vital Monitor</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div class="shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">ESP32 + C1001</p>
+          <h1>Offline Vital Radar Console</h1>
+          <p class="lede">
+            Live breathing, heart-rate, presence, and motion telemetry over the ESP32 access point.
+            No cloud, no CDN, no internet dependency.
+          </p>
+        </div>
+        <div class="hero-meta">
+          <div class="pill"><span class="dot" id="ws-dot"></span><span id="ws-state">Connecting</span></div>
+          <div class="pill">Mode <strong id="desired-mode">sleep</strong></div>
+          <div class="pill">AP <strong id="ap-ssid">-</strong></div>
+          <div class="pill">IP <strong id="ap-ip">-</strong></div>
+        </div>
+      </header>
+
+      <main class="grid">
+        <section class="panel stat-panel">
+          <div class="panel-head">
+            <h2>Live State</h2>
+            <div class="actions">
+              <button class="button secondary" id="mode-sleep">Sleep/Vitals</button>
+              <button class="button secondary" id="mode-fall">Fall Detection</button>
+              <span id="uptime-badge" class="badge">Uptime 00:00:00</span>
+            </div>
+          </div>
+          <div class="stats">
+            <article class="stat breath">
+              <span class="label">Breath</span>
+              <strong id="breath-value">--</strong>
+              <span class="unit">breaths/min</span>
+            </article>
+            <article class="stat heart">
+              <span class="label">Heart</span>
+              <strong id="heart-value">--</strong>
+              <span class="unit">beats/min</span>
+            </article>
+            <article class="stat distance">
+              <span class="label">Motion</span>
+              <strong id="distance-value">--</strong>
+              <span class="unit">movement score</span>
+            </article>
+            <article class="stat presence">
+              <span class="label">Presence</span>
+              <strong id="presence-value">No target</strong>
+              <span class="unit"><span id="movement-label">none</span> | confidence <span id="confidence-value">0</span>%</span>
+            </article>
+          </div>
+          <div class="legend">
+            <span>Fall state <strong id="fall-state">normal</strong></span>
+            <span>Break height <strong id="fall-break-height">0</strong></span>
+            <span>Residency <strong id="static-residency">0</strong></span>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>History</h2>
+            <div class="actions">
+              <a class="button secondary" href="/download/history.csv">Download History</a>
+              <a class="button" href="/download/log.csv">Download Log</a>
+            </div>
+          </div>
+          <div class="chart-card">
+            <canvas id="trend-chart" width="1200" height="460"></canvas>
+          </div>
+          <div class="legend">
+            <span><i class="swatch breath"></i>Breath</span>
+            <span><i class="swatch heart"></i>Heart</span>
+            <span><i class="swatch distance"></i>Motion</span>
+          </div>
+        </section>
+
+        <section class="panel info-panel">
+          <div class="panel-head">
+            <h2>Session</h2>
+            <button class="button danger" id="clear-log">Clear Log</button>
+          </div>
+          <div class="info-grid">
+            <div>
+              <span class="meta-label">Sensor baud</span>
+              <strong id="sensor-baud">-</strong>
+            </div>
+            <div>
+              <span class="meta-label">History points</span>
+              <strong id="history-points">0</strong>
+            </div>
+            <div>
+              <span class="meta-label">Sensor reads</span>
+              <strong id="binary-frames">0</strong>
+            </div>
+            <div>
+              <span class="meta-label">Work mode</span>
+              <strong id="text-frames">-</strong>
+            </div>
+            <div>
+              <span class="meta-label">Sensor errors</span>
+              <strong id="parse-errors">0</strong>
+            </div>
+            <div>
+              <span class="meta-label">Last sample</span>
+              <strong id="last-sample">-</strong>
+            </div>
+          </div>
+          <p class="note">
+            History uses device uptime because this build is fully offline and does not assume internet time.
+          </p>
+        </section>
+      </main>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+  </html>
