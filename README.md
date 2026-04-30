@@ -1,7 +1,3 @@
-Here’s a **cleaned, tighter, and more professional version** of your README (reduced verbosity, better flow, still complete but thesis-friendly):
-
----
-
 # ESP32 C1001 Offline Vital Monitor
 
 Standalone ESP32-based IoT system for **non-contact breathing and heart-rate monitoring** using the DFRobot `C1001` 60 GHz mmWave sensor. Designed for **privacy-first operation** with fully offline processing and local web interface.
