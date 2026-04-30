@@ -1,136 +1,130 @@
+Here’s a **cleaned, tighter, and more professional version** of your README (reduced verbosity, better flow, still complete but thesis-friendly):
+
+---
+
 # ESP32 C1001 Offline Vital Monitor
 
-Standalone ESP32 firmware and offline web UI for a non-contact single-person breathing and heart-rate monitor using the DFRobot `C1001` 60 GHz mmWave sensor.
+Standalone ESP32-based IoT system for **non-contact breathing and heart-rate monitoring** using the DFRobot `C1001` 60 GHz mmWave sensor. Designed for **privacy-first operation** with fully offline processing and local web interface.
 
-## Features
+---
 
-- ESP32 runs as a local Wi-Fi access point
-- Offline web server with no CDN or cloud dependency
-- WebSocket live streaming for current sensor readings
-- On-device history buffer and browser chart
-- CSV log persistence in `LittleFS`
-- Log and history download buttons in the dashboard
-- Uses the official `DFRobot_HumanDetection` library instead of reverse-parsing UART frames
+## Key Features
 
-## Project Layout
+* Local Wi-Fi access point (no internet required)
+* Fully offline web dashboard (no cloud/CDN dependency)
+* Real-time data via WebSocket streaming
+* On-device history + browser-based visualization
+* CSV data logging using LittleFS
+* Downloadable logs and history
+* Uses official `DFRobot_HumanDetection` library
 
-- `esp32_c1001_monitor.ino`
-- `data/index.html`
-- `data/styles.css`
-- `data/app.js`
+---
 
-## Wiring
+## Project Structure
 
-Typical ESP32 wiring for the module:
+```
+esp32_c1001_monitor.ino
+data/
+ ├── index.html
+ ├── styles.css
+ └── app.js
+```
 
-- `C1001 VIN` -> `ESP32 5V`
-- `C1001 GND` -> `ESP32 GND`
-- `C1001 TX` -> `ESP32 GPIO16`
-- `C1001 RX` -> `ESP32 GPIO17`
+---
 
-Important:
+## Hardware Wiring
 
-- The `C1001` uses `5V` power.
-- On `NodeMCU-32S`, this project uses `GPIO16/GPIO17` at `115200` baud for the sensor UART.
-- For respiration rate and heart rate, DFRobot recommends placing the sensor within about `1.5m` and facing the chest.
+| C1001 Pin | ESP32  |
+| --------- | ------ |
+| VIN       | 5V     |
+| GND       | GND    |
+| TX        | GPIO16 |
+| RX        | GPIO17 |
+
+**Notes:**
+
+* Requires **5V power supply**
+* UART runs at **115200 baud**
+* Optimal sensing distance: **≤ 1.5m (chest-facing)**
+
+---
 
 ## Arduino IDE Setup
 
-Open this sketch folder directly in Arduino IDE:
+### 1. Install ESP32 Board
 
-- `F:\GOOGLE Antigravity\BCA\esp32_c1001_monitor`
-
-The folder name and sketch name already match, which Arduino IDE requires.
-
-### 1. Install ESP32 board support
-
-In Arduino IDE:
-
-- `File -> Preferences`
-- Add this Board Manager URL if needed:
+* Preferences → Add URL:
   `https://espressif.github.io/arduino-esp32/package_esp32_index.json`
-- Open `Tools -> Board -> Boards Manager`
-- Install `esp32 by Espressif Systems`
+* Install: *esp32 by Espressif Systems*
 
-### 2. Install required libraries
+### 2. Required Libraries
 
-In `Tools -> Manage Libraries`, install:
+* ArduinoJson
+* WebSockets
+* DFRobot_HumanDetection
 
-- `ArduinoJson` by Benoit Blanchon
-- `WebSockets` by Markus Sattler
-- `DFRobot_HumanDetection` by DFRobot
+(Built-in: WiFi, WebServer, LittleFS)
 
-`WiFi`, `WebServer`, and `LittleFS` come from the ESP32 core.
+### 3. Board Configuration
 
-### 3. Select board settings
+* Board: ESP32 Dev Module
+* Flash: ≥ 4MB
+* Partition: LittleFS supported
 
-Typical working settings:
+---
 
-- `Board`: `ESP32 Dev Module`
-- `Flash Size`: at least `4MB`
-- `Partition Scheme`: choose one with `LittleFS` or enough app/data space
-- `Port`: your ESP32 serial port
-
-### 4. Install a filesystem uploader
-
-To upload the `data/` folder you need an Arduino IDE filesystem upload tool that supports ESP32 `LittleFS`.
-
-Use one of these approaches:
-
-- Arduino IDE 2.x plugin/tool for ESP32 LittleFS upload
-- legacy ESP32 Sketch Data Upload tool if you are on Arduino IDE 1.8.x
-
-The required behavior is the same: upload the contents of the local `data/` folder into ESP32 `LittleFS`.
-
-### 5. Upload firmware and web assets
+## Upload Steps
 
 1. Open `esp32_c1001_monitor.ino`
-2. Click `Verify`
-3. Click `Upload`
-4. Run the ESP32 `LittleFS` data upload tool for the `data/` folder
-5. Open `Serial Monitor` at `115200`
+2. Verify & Upload firmware
+3. Upload `/data` folder to LittleFS
+4. Open Serial Monitor (115200 baud)
 
-## Runtime
+---
 
-After boot, the ESP32 creates:
+## Runtime Access
 
-- SSID: `C1001-Monitor`
-- Password: `radar12345`
+* SSID: `C1001-Monitor`
+* Password: `radar12345`
+* Dashboard: `http://192.168.4.1/`
 
-Open:
+---
 
-- `http://192.168.4.1/`
+## Dashboard Includes
 
-The dashboard shows:
+* Breathing rate
+* Heart rate
+* Motion detection
+* Presence estimation
+* Sensor statistics
+* Live charts + history
+* CSV export
 
-- live breath rate
-- live heart rate
-- movement score
-- presence estimate
-- sensor read/error stats
-- recent history chart
-- CSV downloads
+---
 
 ## Log Format
 
-The persisted log file is `LittleFS:/vitals.csv`.
+Stored in: `LittleFS:/vitals.csv`
 
-Columns:
+Fields:
 
-- `millis`
-- `uptime`
-- `breath_bpm`
-- `heart_bpm`
-- `motion_score`
-- `present`
-- `movement_state`
-- `confidence`
+* millis, uptime
+* breath_bpm, heart_bpm
+* motion_score
+* present, movement_state
+* confidence
 
-Because this system is intentionally offline, timestamps are based on device uptime unless you add an RTC or another trusted time source.
+---
 
-## Notes
+## Important Notes
 
-- This build follows DFRobot's documented approach of using `DFRobot_HumanDetection` in `sleep mode` for presence, respiration, and heart rate on the `C1001`.
-- Presence and confidence here are application-level heuristics, not medical or safety-certified signals.
-- If your board uses different UART pins, update `kSensorRxPin` and `kSensorTxPin` in `esp32_c1001_monitor.ino`.
-- If the dashboard says `Filesystem unavailable`, upload the `data/` folder to `LittleFS` again instead of formatting automatically.
+* Fully offline system → no real-world timestamps (uptime-based)
+* Not medical-grade; values are indicative only
+* Ensure correct UART pins (`GPIO16/17`) or update in code
+* If UI fails, re-upload LittleFS data
+
+---
+
+## Summary
+
+This project demonstrates a **privacy-focused IoT health monitoring system** using mmWave sensing, enabling **contactless vital tracking with zero cloud dependency**, suitable for edge computing and secure environments.
